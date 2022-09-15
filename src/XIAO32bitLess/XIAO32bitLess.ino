@@ -4,6 +4,9 @@ U8X8_SSD1306_128X64_NONAME_HW_I2C u8x8(/* clock=*/ 7, /* data=*/ 6, /* reset=*/ 
 #include <U8g2lib.h>
 U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
 
+#include "I2C_MPU6886.h"
+I2C_MPU6886 imu(I2C_MPU6886_DEFAULT_ADDRESS, Wire);
+
 #include <BLEDevice.h>
 #include <BLEUtils.h>
 #include <BLEServer.h>
@@ -284,10 +287,15 @@ class StateCallbacks: public BLECharacteristicCallbacks {
 #endif
 float ax = 0, ay = 0, az = 0;
 int16_t iax, iay, iaz;
-int16_t gx, gy, gz;
+float gx, gy, gz;
 float pitch , roll, yaw;
+float t;
 
 void updateIMU() {
+  imu.getAccel(&ax, &ay, &az);
+  imu.getGyro(&gx, &gy, &gz);
+  imu.getTemp(&t);
+
   iax = (int16_t)(ax * ACC_MULT);
   iay = (int16_t)(ay * ACC_MULT);
   iaz = (int16_t)(az * ACC_MULT);
@@ -354,6 +362,9 @@ void setup() {
   u8g2.setFlipMode(1);
   u8g2.clearDisplay();
   u8g2.sendBuffer();
+
+  // Setup IMU MPU6886
+  imu.begin();
 
   // Create MAC address base fixed ID
   uint8_t mac0[6] = {0};
