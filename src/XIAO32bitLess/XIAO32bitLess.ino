@@ -367,10 +367,12 @@ void setup() {
   }
   log_i("ID char:%s\n", ID.c_str());
   char adv_str[32] = {0};
-  String("BBC micro:bit [" + ID + "]").toCharArray(adv_str, sizeof(adv_str));
+  String("ID:" + ID).toCharArray(adv_str, sizeof(adv_str));
 
   // Start up screen
   fillScreen(WHITE);
+  u8x8.setCursor(0, 0);
+  u8x8.printf("%s", adv_str);
 
   log_i("BLE start.\n");
   log_i("%s\n", adv_str);
