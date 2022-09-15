@@ -1,6 +1,8 @@
 #include <U8x8lib.h>
-
 U8X8_SSD1306_128X64_NONAME_HW_I2C u8x8(/* clock=*/ 7, /* data=*/ 6, /* reset=*/ U8X8_PIN_NONE);   // OLEDs without Reset of the Display
+
+#include <U8g2lib.h>
+U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
 
 #include <BLEDevice.h>
 #include <BLEUtils.h>
@@ -66,23 +68,56 @@ BLECharacteristic* pCharacteristic[9] = {0};
 bool deviceConnected = false;
 
 // for pixel pattern
-#define TEXT_SPACE 30
+#define TEXT_SPACE 10
+#define DISPLAY_WIDTH 128
+#define DISPLAY_HEIGHT 64
+#define WHITE 1
+#define BLACK 0
 uint16_t pixel[5][5] = {0};
 
 void drawPixel(int x, int y, int c) {
+  int w = DISPLAY_WIDTH;
+  int h = DISPLAY_HEIGHT;
+
+  int ps = (w < (h - TEXT_SPACE)) ? w / 5 : (h - TEXT_SPACE) / 5; // Pixel size
+
+  if (c == WHITE) {
+    u8g2.drawBox(x * ps, y * ps + TEXT_SPACE, ps, ps);
+    u8g2.sendBuffer();
+  }
 };
 
 void displayShowPixel() {
+  u8g2.clearDisplay();
+  for (int y = 0; y < 5; y++) {
+    for (int x = 0; x < 5; x++) {
+      log_i("%1d", pixel[y][x] & 0b1);
+      if (pixel[y][x] & 0b1) {
+        drawPixel(x, y, 1);
+      } else {
+        // You must clear pixel with black.
+        // drawPixel(x, y, 0);
+      }
+    }
+  }
 };
 
 void fillScreen(int c) {
+  if (c == BLACK) {
+    u8g2.clearDisplay();
+  } else {
+    u8g2.drawBox(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
+    u8g2.sendBuffer();
+  }
 };
 
 class MyServerCallbacks: public BLEServerCallbacks {
     void onConnect(BLEServer * pServer) {
       log_i("connect\n");
       deviceConnected = true;
-      // fillScreen(WHITE);
+      u8g2.clearDisplay();
+      u8g2.sendBuffer();
+      fillScreen(BLACK);
     };
 
     void onDisconnect(BLEServer * pServer) {
@@ -136,7 +171,7 @@ class CmdCallbacks: public BLECharacteristicCallbacks {
         if (cmd_display == 0x00) {
           // CLEAR    0x00
           log_i(">> clear\n");
-          //fillScreen(BLACK);
+          fillScreen(BLACK);
         } else if (cmd_display == 0x01) {
           // TEXT     0x01
           log_i(">> text\n");
@@ -309,9 +344,16 @@ void setup() {
   Serial.begin(115200);
 
   // for OLED Display
+  //// for text
   u8x8.begin();
   u8x8.setFlipMode(1);
   u8x8.setFont(u8x8_font_chroma48medium8_r);
+
+  //// for 5x5 LED
+  u8g2.begin();
+  u8g2.setFlipMode(1);
+  u8g2.clearDisplay();
+  u8g2.sendBuffer();
 
   // Create MAC address base fixed ID
   uint8_t mac0[6] = {0};
@@ -328,7 +370,7 @@ void setup() {
   String("BBC micro:bit [" + ID + "]").toCharArray(adv_str, sizeof(adv_str));
 
   // Start up screen
-  // fillScreen(BLUE);
+  fillScreen(WHITE);
 
   log_i("BLE start.\n");
   log_i("%s\n", adv_str);
