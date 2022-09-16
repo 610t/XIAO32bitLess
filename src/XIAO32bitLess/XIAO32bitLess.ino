@@ -180,6 +180,8 @@ class CmdCallbacks: public BLECharacteristicCallbacks {
           log_i(">> text\n");
           log_i("%s\n", &(cmd_str[1]));
           u8x8.setCursor(0, 0);
+          u8x8.printf("                 "); // Clear text space
+          u8x8.setCursor(0, 0);
           u8x8.printf("%s", &(cmd_str[1]));
         } else if (cmd_display == 0x02) {
           // PIXELS_0 0x02
