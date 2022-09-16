@@ -377,13 +377,17 @@ void setup() {
     ID += ID_char;
   }
   log_i("ID char:%s\n", ID.c_str());
-  char adv_str[32] = {0};
-  String("ID:" + ID).toCharArray(adv_str, sizeof(adv_str));
+  // Advertisement string for Microbit More.
+  char adv_str[32] = { 0 };
+  String("BBC micro:bit [" + ID + "]").toCharArray(adv_str, sizeof(adv_str));
+  // ID string to show at splash screen.
+  char id_str[32] = { 0 };
+  String("ID:" + ID).toCharArray(id_str, sizeof(id_str));
 
   // Start up screen
   fillScreen(WHITE);
   u8x8.setCursor(0, 0);
-  u8x8.printf("%s", adv_str);
+  u8x8.printf("%s", id_str);
 
   log_i("BLE start.\n");
   log_i("%s\n", adv_str);
