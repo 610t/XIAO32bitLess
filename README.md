@@ -1,4 +1,6 @@
 # XIAO32bitLess
+![img](img/XIAO32bitLess-Scratch.png)
+
 Microbit More compatible environment for Seeed Studio XIAO ESP32C3.
 
 ## What is XIAO32bitLess
