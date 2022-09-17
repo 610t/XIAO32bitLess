@@ -1,3 +1,5 @@
+#define BTN_PIN D1
+
 #include <U8x8lib.h>
 U8X8_SSD1306_128X64_NONAME_HW_I2C u8x8(/* clock=*/7, /* data=*/6, /* reset=*/U8X8_PIN_NONE);  // OLEDs without Reset of the Display
 
@@ -355,6 +357,9 @@ class AnalogPinCallbacks : public BLECharacteristicCallbacks {
 void setup() {
   Serial.begin(115200);
 
+  // button
+  pinMode(BTN_PIN, INPUT_PULLUP);
+
   // for OLED Display
   //// for text
   u8x8.begin();
@@ -516,7 +521,8 @@ void loop() {
             btn_statusA = 0, btn_statusB = 0, btn_statusC = 0;
 
     // Get all button status
-
+    btnA = (digitalRead(BTN_PIN) == 0);
+    btn_statusA = btnA;
 
 #define BUTTON_DELAY 50
 
