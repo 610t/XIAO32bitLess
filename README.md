@@ -8,7 +8,7 @@ XIAO ESP32C3 act as a Microbit More's micro:bit, so you can play with Scratch an
 ## Requirement
 - Seeed Studio XIAO ESP32C3 https://wiki.seeedstudio.com/XIAO_ESP32C3_Getting_Started/
 - (Optional) Seeed Studio XIAO Expansion board https://wiki.seeedstudio.com/Seeeduino-XIAO-Expansion-Board/
- - You can use: OLED(5x5 LED, text) 
+  - You can use OLED(5x5 LED, text), Button, and Buzzer. 
 - (Optional) IMU MPU6886 https://shop.m5stack.com/products/6-axis-imu-unitmpu6886
 
 ## How to use
