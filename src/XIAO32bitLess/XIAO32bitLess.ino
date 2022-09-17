@@ -1,4 +1,5 @@
 #define BTN_PIN D1
+#define SPEAKER_PIN A3
 
 #include <U8x8lib.h>
 U8X8_SSD1306_128X64_NONAME_HW_I2C u8x8(/* clock=*/7, /* data=*/6, /* reset=*/U8X8_PIN_NONE);  // OLEDs without Reset of the Display
@@ -226,6 +227,13 @@ class CmdCallbacks : public BLECharacteristicCallbacks {
         log_i("Volume:%d\n", volume);
         log_i("Duration:%d\n", duration);
         log_i("Freq:%d\n", freq);
+        // Play tone with frequency freq and duration.
+        for (long i = 0; i < duration * 1000L; i += freq * 2) {
+          digitalWrite(SPEAKER_PIN, HIGH);
+          delayMicroseconds(freq);
+          digitalWrite(SPEAKER_PIN, LOW);
+          delayMicroseconds(freq);
+        }
       }
     } else if (cmd == 0x04) {
       //// CMD_DATA (only v2) 0x04
@@ -374,6 +382,9 @@ void setup() {
 
   // Setup IMU MPU6886
   imu.begin();
+
+  // for buzzer
+  pinMode(SPEAKER_PIN, OUTPUT);
 
   // Create MAC address base fixed ID
   uint8_t mac0[6] = { 0 };
