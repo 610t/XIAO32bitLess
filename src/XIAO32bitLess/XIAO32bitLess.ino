@@ -1,3 +1,5 @@
+#include <Arduino.h>
+
 #define BTN_PIN D1
 #define SPEAKER_PIN A3
 
@@ -7,13 +9,20 @@ U8X8_SSD1306_128X64_NONAME_HW_I2C u8x8(/* clock=*/7, /* data=*/6, /* reset=*/U8X
 #include <U8g2lib.h>
 U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, /* reset=*/U8X8_PIN_NONE);
 
+#if defined(ARDUINO_XIAO_ESP32C3)
 #include "I2C_MPU6886.h"
 I2C_MPU6886 imu(I2C_MPU6886_DEFAULT_ADDRESS, Wire);
+#endif
 
+#if defined(ARDUINO_XIAO_ESP32C3)
 #include <BLEDevice.h>
 #include <BLEUtils.h>
 #include <BLEServer.h>
 #include <BLE2902.h>
+#else
+// nRF52840 Sense
+#include <ArduinoBLE.h>
+#endif
 
 #define MBIT_MORE_SERVICE "0b50f3e4-607f-4151-9091-7d008d6ffc5c"
 #define MBIT_MORE_CH_COMMAND "0b500100-607f-4151-9091-7d008d6ffc5c"       // R&W(20byte)
@@ -306,9 +315,11 @@ float pitch, roll, yaw;
 float t;
 
 void updateIMU() {
+#if defined(ARDUINO_XIAO_ESP32C3)
   imu.getAccel(&ax, &ay, &az);
   imu.getGyro(&gx, &gy, &gz);
   imu.getTemp(&t);
+#endif
 
   iax = (int16_t)(ax * ACC_MULT);
   iay = (int16_t)(ay * ACC_MULT);
@@ -380,8 +391,10 @@ void setup() {
   u8g2.clearDisplay();
   u8g2.sendBuffer();
 
+#if defined(ARDUINO_XIAO_ESP32C3)
   // Setup IMU MPU6886
   imu.begin();
+#endif
 
   // for buzzer
   pinMode(SPEAKER_PIN, OUTPUT);
