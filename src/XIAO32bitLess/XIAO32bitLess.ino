@@ -14,6 +14,15 @@ U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, /* reset=*/U8X8_PIN_NONE);
 I2C_MPU6886 imu(I2C_MPU6886_DEFAULT_ADDRESS, Wire);
 #endif
 
+//#if defined(ARDUINO_XIAO_ESP32C3)
+// For multitask for play tone
+TaskHandle_t playToneTaskHandle = NULL;
+bool isPlayTone = false;
+
+// Play tone parameters
+uint32_t duration;
+uint8_t volume;
+
 #if defined(ARDUINO_XIAO_ESP32C3)
 #include <BLEDevice.h>
 #include <BLEUtils.h>
@@ -222,27 +231,17 @@ class CmdCallbacks : public BLECharacteristicCallbacks {
       if (cmd_audio == 0x00) {
         // STOP_TONE  0x00
         log_i(">> Stop tone\n");
-
+        isPlayTone = false;
       } else if (cmd_audio == 0x01) {
         // PLAY_TONE  0x01
         const uint8_t max_volume = 5;
         log_i(">> Play tone\n");
-        uint32_t duration = (cmd_str[4] & 0xff) << 24
-                            | (cmd_str[3] & 0xff) << 16
-                            | (cmd_str[2] & 0xff) << 8
-                            | (cmd_str[1] & 0xff);
-        uint16_t freq = 1000000 / duration;
-        uint8_t volume = map(cmd_str[5], 0, 255, 0, max_volume);
-        log_i("Volume:%d\n", volume);
-        log_i("Duration:%d\n", duration);
-        log_i("Freq:%d\n", freq);
-        // Play tone with frequency freq and duration.
-        for (long i = 0; i < duration * 1000L; i += freq * 2) {
-          digitalWrite(SPEAKER_PIN, HIGH);
-          delayMicroseconds(freq);
-          digitalWrite(SPEAKER_PIN, LOW);
-          delayMicroseconds(freq);
-        }
+        duration = (cmd_str[4] & 0xff) << 24
+                   | (cmd_str[3] & 0xff) << 16
+                   | (cmd_str[2] & 0xff) << 8
+                   | (cmd_str[1] & 0xff);
+        volume = map(cmd_str[5], 0, 255, 0, max_volume);
+        isPlayTone = true;
       }
     } else if (cmd == 0x04) {
       //// CMD_DATA (only v2) 0x04
@@ -495,6 +494,9 @@ void setup() {
   pService->start();
   BLEAdvertising *pAdvertising = pServer->getAdvertising();
   pAdvertising->start();
+
+  // Multitask for play tone.
+  xTaskCreatePinnedToCore(playToneTask, "playToneTask", 4096, NULL, 1, &playToneTaskHandle, 1);
 }
 
 void sendBtn(uint8_t btnID, uint8_t btn, uint8_t btn_status, uint8_t prev) {
@@ -531,6 +533,27 @@ void sendBtn(uint8_t btnID, uint8_t btn, uint8_t btn_status, uint8_t prev) {
     action[3] = 0x01;
     pCharacteristic[4]->setValue(action, 20);
     pCharacteristic[4]->notify();
+  }
+}
+
+void playToneTask(void *args) {
+  while (1) {
+    if (isPlayTone) {
+      uint16_t freq = 1000000 / duration;
+
+      log_i("Volume:%d\n", volume);
+      log_i("Duration:%d\n", duration);
+      log_i("Freq:%d\n", freq);
+      // Play tone with frequency freq and duration.
+      for (long i = 0; i < duration * 1000L; i += freq * 2) {
+        digitalWrite(SPEAKER_PIN, HIGH);
+        delayMicroseconds(freq);
+        digitalWrite(SPEAKER_PIN, LOW);
+        delayMicroseconds(freq);
+      }
+      isPlayTone = false;
+    }
+    delay(10);
   }
 }
 
