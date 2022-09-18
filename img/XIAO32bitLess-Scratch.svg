@@ -2829,17 +2829,6 @@
          x="211.73035"
          y="118.29552" />
     </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath10131">
-      <rect
-         style="fill:#333333;fill-opacity:0.5;stroke-width:1.12;stroke-opacity:0.5"
-         id="rect10133"
-         width="73.131905"
-         height="68.781281"
-         x="196.1924"
-         y="106.69386" />
-    </clipPath>
     <filter
        style="color-interpolation-filters:sRGB;"
        inkscape:label="Drop Shadow"
@@ -2912,6 +2901,125 @@
          result="composite2"
          id="feComposite14209" />
     </filter>
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Drop Shadow"
+       id="filter18595"
+       x="-0.039986836"
+       y="-0.40032332"
+       width="1.0966349"
+       height="1.967448">
+      <feFlood
+         flood-opacity="0.992157"
+         flood-color="rgb(0,0,0)"
+         result="flood"
+         id="feFlood18585" />
+      <feComposite
+         in="flood"
+         in2="SourceGraphic"
+         operator="in"
+         result="composite1"
+         id="feComposite18587" />
+      <feGaussianBlur
+         in="composite1"
+         stdDeviation="1"
+         result="blur"
+         id="feGaussianBlur18589" />
+      <feOffset
+         dx="1"
+         dy="1"
+         result="offset"
+         id="feOffset18591" />
+      <feComposite
+         in="SourceGraphic"
+         in2="offset"
+         operator="over"
+         result="composite2"
+         id="feComposite18593" />
+    </filter>
+    <filter
+       inkscape:menu="Shadows and Glows"
+       inkscape:menu-tooltip="Cut out, add inner shadow and colorize some parts of an image"
+       style="color-interpolation-filters:sRGB"
+       inkscape:label="Emergence"
+       id="filter4726-3"
+       x="-0.23822086"
+       y="-0.98215446"
+       width="1.5739096"
+       height="3.3661565">
+      <feColorMatrix
+         values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.21 0.72 0.07 0 0 "
+         result="result1"
+         id="feColorMatrix4698-8" />
+      <feColorMatrix
+         values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 2 0 "
+         result="result9"
+         id="feColorMatrix4700-1" />
+      <feComposite
+         in2="result9"
+         in="SourceGraphic"
+         operator="in"
+         result="result4"
+         id="feComposite4702-5" />
+      <feFlood
+         result="result2"
+         flood-color="rgb(0,0,0)"
+         id="feFlood4704-3" />
+      <feComposite
+         in2="result9"
+         operator="in"
+         result="result10"
+         id="feComposite4706-5" />
+      <feComposite
+         in2="result4"
+         operator="atop"
+         id="feComposite4708-4" />
+      <feGaussianBlur
+         stdDeviation="3"
+         result="result8"
+         id="feGaussianBlur4710-3" />
+      <feOffset
+         dx="3"
+         dy="3"
+         result="result3"
+         in="result8"
+         id="feOffset4712-6" />
+      <feFlood
+         flood-opacity="1"
+         flood-color="rgb(219,173,62)"
+         result="result5"
+         id="feFlood4714-5" />
+      <feMerge
+         result="result6"
+         id="feMerge4722-9">
+        <feMergeNode
+           in="result5"
+           id="feMergeNode4716-5" />
+        <feMergeNode
+           in="result3"
+           id="feMergeNode4718-4" />
+        <feMergeNode
+           in="result4"
+           id="feMergeNode4720-9" />
+      </feMerge>
+      <feComposite
+         in2="SourceGraphic"
+         operator="in"
+         result="result7"
+         id="feComposite4724-1" />
+    </filter>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath36341">
+      <rect
+         style="fill:#333333;fill-opacity:0.5;stroke-width:1.12;stroke-opacity:0.5"
+         id="rect36343"
+         width="73.131897"
+         height="68.781281"
+         x="196.19238"
+         y="106.69389"
+         ry="14.237024" />
+    </clipPath>
   </defs>
   <sodipodi:namedview
      id="base"
@@ -2920,17 +3028,17 @@
      borderopacity="1.0"
      inkscape:pageopacity="1"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.90939406"
-     inkscape:cx="547.06757"
-     inkscape:cy="500.88297"
+     inkscape:zoom="1.909316"
+     inkscape:cx="790.59726"
+     inkscape:cy="464.3024"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      inkscape:document-rotation="0"
      showgrid="false"
      inkscape:window-width="1830"
      inkscape:window-height="1007"
-     inkscape:window-x="37"
-     inkscape:window-y="27"
+     inkscape:window-x="49"
+     inkscape:window-y="23"
      inkscape:window-maximized="0"
      inkscape:pagecheckerboard="true" />
   <metadata
@@ -3120,14 +3228,14 @@
     </g>
     <text
        xml:space="preserve"
-       style="font-size:7.76111px;line-height:1.25;font-family:DFPRuLeiA-W5;-inkscape-font-specification:DFPRuLeiA-W5;stroke-width:0.285632"
+       style="font-size:7.76111px;line-height:1.25;font-family:DFPRuLeiA-W5;-inkscape-font-specification:DFPRuLeiA-W5;stroke-width:0.285632;fill:#ff0000;filter:url(#filter18595)"
        x="180.56308"
-       y="105.95805"
+       y="107.12183"
        id="text954-5-6"><tspan
          sodipodi:role="line"
          x="180.56308"
-         y="105.95805"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.76111px;font-family:sans-serif;-inkscape-font-specification:sans-serif;stroke-width:0.285632"
+         y="107.12183"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.76111px;font-family:DFGPOPCorn-W12;-inkscape-font-specification:DFGPOPCorn-W12;stroke-width:0.285632;fill:#ff0000"
          id="tspan1020">XIAO32bitLess</tspan></text>
     <image
        width="75.035477"
@@ -13546,22 +13654,22 @@ gFAJpxpFpT1piAnIpM0etFAAaSg0UAf/2Q==
     <rect
        style="fill:none;fill-opacity:0.99734;stroke:#ffff00;stroke-width:0.735314;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect4473"
-       width="10.640298"
-       height="10.640296"
-       x="211.95631"
-       y="138.1499" />
+       width="10.756485"
+       height="10.225937"
+       x="211.84013"
+       y="138.56425" />
     <text
        xml:space="preserve"
-       style="font-size:9.63414px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';fill:#ffff00;stroke:#ffff00;stroke-width:0.264583;filter:url(#filter4556)"
+       style="font-size:18.3429px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';fill:#ffff00;stroke:#ffff00;stroke-width:0.264583;filter:url(#filter4556)"
        x="-103.70922"
        y="185.33839"
        id="text4477"
-       transform="matrix(0.26925356,0,0,0.26925356,237.78932,102.55001)"><tspan
+       transform="matrix(0.26925356,0,0,0.26925356,235.30372,102.85213)"><tspan
          sodipodi:role="line"
          id="tspan4475"
          x="-103.70922"
          y="185.33839"
-         style="font-size:9.63414px;fill:#ffff00;stroke:#ffff00;stroke-width:0.264583">5x5 pattern</tspan></text>
+         style="font-size:18.3429px;fill:#ffff00;stroke:#ffff00;stroke-width:0.264583">5x5 pattern</tspan></text>
     <rect
        style="fill:none;fill-opacity:0.99734;stroke:#ffff00;stroke-width:0.735314;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect4473-7"
@@ -13571,16 +13679,16 @@ gFAJpxpFpT1piAnIpM0etFAAaSg0UAf/2Q==
        y="134.14023" />
     <text
        xml:space="preserve"
-       style="font-size:9.63414px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';fill:#ffff00;stroke:#ffff00;stroke-width:0.264583;filter:url(#filter4586)"
+       style="font-size:18.3429px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';fill:#ffff00;stroke:#ffff00;stroke-width:0.264583;filter:url(#filter4586)"
        x="-83.636475"
        y="119.76743"
        id="text4481"
-       transform="matrix(0.26925356,0,0,0.26925356,236.28052,100.62687)"><tspan
+       transform="matrix(0.26925356,0,0,0.26925356,241.59715,101.15619)"><tspan
          sodipodi:role="line"
          id="tspan4479"
          x="-83.636475"
          y="119.76743"
-         style="font-size:9.63414px;fill:#ffff00;stroke:#ffff00;stroke-width:0.264583">text</tspan></text>
+         style="font-size:18.3429px;fill:#ffff00;stroke:#ffff00;stroke-width:0.264583">text</tspan></text>
     <rect
        style="fill:none;fill-opacity:0.99734;stroke:#ffff00;stroke-width:0.735314;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect4473-8"
@@ -13589,21 +13697,52 @@ gFAJpxpFpT1piAnIpM0etFAAaSg0UAf/2Q==
        x="203.28348"
        y="113.73773"
        ry="4.2632564e-14" />
+    <rect
+       style="fill:none;fill-opacity:0.99734;stroke:#ffff00;stroke-width:0.735314;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect4473-8-8"
+       width="9.7295303"
+       height="10.640454"
+       x="238.65591"
+       y="113.09425"
+       ry="4.2632564e-14" />
     <text
        xml:space="preserve"
-       style="font-size:9.63414px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';fill:#ffff00;stroke:#ffff00;stroke-width:0.264583;filter:url(#filter4726)"
+       style="font-size:18.3429px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';fill:#ffff00;stroke:#ffff00;stroke-width:0.264583;filter:url(#filter4726)"
        x="-89.658302"
        y="253.58575"
        id="text4602"
-       transform="matrix(0.26925356,0,0,0.26925356,228.16938,55.314664)"><tspan
+       transform="matrix(0.26925356,0,0,0.26925356,225.9498,55.616792)"><tspan
          sodipodi:role="line"
          id="tspan4600"
          x="-89.658302"
          y="253.58575"
-         style="font-size:9.63414px;fill:#ffff00;stroke:#ffff00;stroke-width:0.264583">button </tspan></text>
+         style="font-size:18.3429px;fill:#ffff00;stroke:#ffff00;stroke-width:0.264583">button </tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:18.3429px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';fill:#ffff00;stroke:#ffff00;stroke-width:0.264583;filter:url(#filter4726-3)"
+       x="-89.658302"
+       y="253.58575"
+       id="text4602-7"
+       transform="matrix(0.26925356,0,0,0.26925356,260.63488,59.813992)"><tspan
+         sodipodi:role="line"
+         id="tspan4600-5"
+         x="-89.658302"
+         y="253.58575"
+         style="font-size:18.3429px;fill:#ffff00;stroke:#ffff00;stroke-width:0.264583">buzzer</tspan></text>
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:1.07956;stroke-miterlimit:4;stroke-dasharray:none;filter:url(#filter14211)"
+       id="rect1586"
+       width="90.690796"
+       height="68.069565"
+       x="178.84056"
+       y="97.128349"
+       ry="2.9004157"
+       inkscape:export-filename="/Users/mutoh/Documents/Presentation/2022:11:14 Hero's League/SeeedWalker;Scratch+reTerminal+XIAO ESP32C3 de 歩数計/inkscape/XIAO32bitLess-Scratch.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
     <g
-       id="g11515"
-       transform="translate(-0.82869021,0.82869021)">
+       id="g36377"
+       transform="translate(1.1085994,-2.3557738)">
       <image
          width="132.29167"
          height="132.29167"
@@ -15045,25 +15184,26 @@ QVJKSR8QRVEURfn9jabcFUVRFOUHgP8fBennbZ2xvxoAAAAASUVORK5CYII=
          id="image10021"
          x="166.19818"
          y="66.651772"
-         clip-path="url(#clipPath10131)"
-         transform="matrix(0.37960335,0,0,0.37960335,105.76482,85.760638)" />
+         clip-path="url(#clipPath36341)"
+         transform="matrix(0.37960335,0,0,0.37960335,104.93613,86.589328)" />
       <g
-         id="g14337"
-         transform="matrix(0.36765729,0,0,0.36765729,234.68608,60.771464)">
+         id="g36236"
+         transform="translate(40.18673,-2.3557738)">
         <text
            xml:space="preserve"
-           style="font-size:7.05556px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';stroke:#ff0000;stroke-width:0.264583;filter:url(#filter4636)"
+           style="font-size:11.5143px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';stroke:#ff0000;stroke-width:0.264583;filter:url(#filter4636)"
            x="-140.93961"
            y="277.35684"
-           id="text4590"><tspan
+           id="text4590"
+           transform="matrix(0.36765729,0,0,0.36765729,193.47675,61.600154)"><tspan
              sodipodi:role="line"
              id="tspan4588"
              x="-140.93961"
              y="277.35684"
-             style="stroke:#ff0000;stroke-width:0.264583">accel.</tspan></text>
+             style="font-size:11.5143px;stroke:#ff0000;stroke-width:0.264583">accel.</tspan></text>
         <g
            id="g5286"
-           transform="matrix(0.08405722,0,0,0.08405722,-151.57517,227.31359)">
+           transform="matrix(0.03090425,0,0,0.03090425,140.58851,145.17365)">
           <g
              id="g5202">
             <g
@@ -15133,17 +15273,6 @@ QVJKSR8QRVEURfn9jabcFUVRFOUHgP8fBennbZ2xvxoAAAAASUVORK5CYII=
         </g>
       </g>
     </g>
-    <rect
-       style="fill:none;stroke:#000000;stroke-width:1.07956;stroke-miterlimit:4;stroke-dasharray:none;filter:url(#filter14211)"
-       id="rect1586"
-       width="90.690796"
-       height="68.069565"
-       x="178.84056"
-       y="97.128349"
-       ry="2.9004157"
-       inkscape:export-filename="/Users/mutoh/Documents/Presentation/2022:11:14 Hero's League/SeeedWalker;Scratch+reTerminal+XIAO ESP32C3 de 歩数計/inkscape/XIAO32bitLess-Scratch.png"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90" />
     <g
        id="g18579"
        transform="matrix(1.0795565,0,0,1.0795565,-16.277468,-20.859724)">
