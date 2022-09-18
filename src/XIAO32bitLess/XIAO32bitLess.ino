@@ -290,10 +290,12 @@ class CmdCallbacks : public BLECharacteristicCallbacks {
   }
 };
 
+// for temperature
+float temp = 0;
+
 // for state
 class StateCallbacks : public BLECharacteristicCallbacks {
   void onRead(BLECharacteristic *pCharacteristic) {
-    float temp = 0;
     state[6] = (random(256) & 0xff);  // Random sensor value for soundlevel
 
     state[5] = ((int)(temp + 128) & 0xff);  // temperature(+128)
@@ -311,13 +313,12 @@ float ax = 0, ay = 0, az = 0;
 int16_t iax, iay, iaz;
 float gx, gy, gz;
 float pitch, roll, yaw;
-float t;
 
 void updateIMU() {
 #if defined(ARDUINO_XIAO_ESP32C3)
   imu.getAccel(&ax, &ay, &az);
   imu.getGyro(&gx, &gy, &gz);
-  imu.getTemp(&t);
+  imu.getTemp(&temp);
 #endif
 
   iax = (int16_t)(ax * ACC_MULT);
