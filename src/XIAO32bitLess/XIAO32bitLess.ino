@@ -3,20 +3,37 @@
 #define BTN_PIN D1
 #define SPEAKER_PIN A3
 
+#if !defined(ARDUINO_WIO_TERMINAL)
 #include <U8x8lib.h>
 U8X8_SSD1306_128X64_NONAME_HW_I2C u8x8(/* clock=*/7, /* data=*/6, /* reset=*/U8X8_PIN_NONE);  // OLEDs without Reset of the Display
 
 #include <U8g2lib.h>
 U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, /* reset=*/U8X8_PIN_NONE);
+#endif
 
 #if defined(ARDUINO_XIAO_ESP32C3)
 #include "I2C_MPU6886.h"
 I2C_MPU6886 imu(I2C_MPU6886_DEFAULT_ADDRESS, Wire);
 #endif
 
-//#if defined(ARDUINO_XIAO_ESP32C3)
+#if defined(ARDUINO_WIO_TERMINAL)
+// Display
+#include "TFT_eSPI.h"
+TFT_eSPI tft;
+// For IMU
+#include "LIS3DHTR.h"
+#include <SPI.h>
+LIS3DHTR<TwoWire> lis;
+// GPIO
+// for PortB
+#define PIN0_INPUT GPIO_NUM_36  // analog input
+#define PIN1_INPUT GPIO_NUM_26
+#endif
+
+#if defined(ARDUINO_XIAO_ESP32C3)
 // For multitask for play tone
 TaskHandle_t playToneTaskHandle = NULL;
+#endif
 bool isPlayTone = false;
 
 // Play tone parameters
@@ -26,12 +43,14 @@ uint8_t volume;
 #if defined(ARDUINO_XIAO_ESP32C3)
 #include <BLEDevice.h>
 #include <BLEUtils.h>
+#else
+// Wio Terminal & nRF52840 Sense
+#undef min
+#undef max
+#include <rpcBLEDevice.h>
+#endif
 #include <BLEServer.h>
 #include <BLE2902.h>
-#else
-// nRF52840 Sense
-#include <ArduinoBLE.h>
-#endif
 
 #define MBIT_MORE_SERVICE "0b50f3e4-607f-4151-9091-7d008d6ffc5c"
 #define MBIT_MORE_CH_COMMAND "0b500100-607f-4151-9091-7d008d6ffc5c"       // R&W(20byte)
@@ -94,9 +113,15 @@ BLECharacteristic *pCharacteristic[9] = { 0 };
 bool deviceConnected = false;
 
 // for pixel pattern
+#if defined(ARDUINO_WIO_TERMINAL)
+#define TEXT_SPACE 30
+#define DISPLAY_WIDTH 320
+#define DISPLAY_HEIGHT 240
+#else
 #define TEXT_SPACE 10
 #define DISPLAY_WIDTH 128
 #define DISPLAY_HEIGHT 64
+#endif
 #define WHITE 1
 #define BLACK 0
 uint16_t pixel[5][5] = { 0 };
@@ -107,20 +132,33 @@ void drawPixel(int x, int y, int c) {
 
   int ps = (w < (h - TEXT_SPACE)) ? w / 5 : (h - TEXT_SPACE) / 5;  // Pixel size
 
+#if defined(ARDUINO_WIO_TERMINAL)
+  tft.fillRect(x * ps, y * ps + TEXT_SPACE, ps, ps, c);
+#else
   if (c == WHITE) {
     u8g2.drawBox(x * ps, y * ps + TEXT_SPACE, ps, ps);
     u8g2.sendBuffer();
   }
+#endif
 };
 
 void displayShowPixel() {
+#if defined(ARDUINO_XIAO_ESP32C3)
   u8g2.clearDisplay();
+#endif
   for (int y = 0; y < 5; y++) {
     for (int x = 0; x < 5; x++) {
       log_i("%1d", pixel[y][x] & 0b1);
       if (pixel[y][x] & 0b1) {
-        drawPixel(x, y, 1);
+#if defined(ARDUINO_WIO_TERMINAL)
+        drawPixel(x, y, TFT_RED);
+#else
+        drawPixel(x, y, WHITE);
+#endif
       } else {
+#if defined(ARDUINO_WIO_TERMINAL)
+        drawPixel(x, y, TFT_BLACK);
+#endif
         // You must clear pixel with black.
         // drawPixel(x, y, 0);
       }
@@ -129,27 +167,40 @@ void displayShowPixel() {
 };
 
 void fillScreen(int c) {
+#if defined(ARDUINO_WIO_TERMINAL)
+  tft.fillScreen(c);
+#else
   if (c == BLACK) {
     u8g2.clearDisplay();
   } else {
     u8g2.drawBox(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
     u8g2.sendBuffer();
   }
+#endif
 };
 
 class MyServerCallbacks : public BLEServerCallbacks {
   void onConnect(BLEServer *pServer) {
     log_i("connect\n");
     deviceConnected = true;
+
+#if defined(ARDUINO_XIAO_ESP32C3)
     u8g2.clearDisplay();
     u8g2.sendBuffer();
     fillScreen(BLACK);
+#else
+    fillScreen(TFT_BLACK);
+#endif
   };
 
   void onDisconnect(BLEServer *pServer) {
     log_i("disconnect\n");
     deviceConnected = false;
+#if defined(ARDUINO_XIAO_ESP32C3)
     ESP.restart();
+#else
+    setup();
+#endif
   }
 };
 
@@ -202,10 +253,15 @@ class CmdCallbacks : public BLECharacteristicCallbacks {
         // TEXT     0x01
         log_i(">> text\n");
         log_i("%s\n", &(cmd_str[1]));
+#if defined(ARDUINO_WIO_TERMINAL)
+        tft.fillRect(0, 0, 320, TEXT_SPACE - 1, BLACK);
+        tft.drawString(String(&(cmd_str[1])), 0, 0);
+#else
         u8x8.setCursor(0, 0);
         u8x8.printf("                 ");  // Clear text space
         u8x8.setCursor(0, 0);
         u8x8.printf("%s", &(cmd_str[1]));
+#endif
       } else if (cmd_display == 0x02) {
         // PIXELS_0 0x02
         log_i(">> pixel0\n");
@@ -296,9 +352,20 @@ float temp = 0;
 // for state
 class StateCallbacks : public BLECharacteristicCallbacks {
   void onRead(BLECharacteristic *pCharacteristic) {
-    state[6] = (random(256) & 0xff);  // Random sensor value for soundlevel
 
+#if defined(ARDUINO_WIO_TERMINAL)
+    temp = lis.getTemperature();
+    int light = (int)map(analogRead(WIO_LIGHT), 0, 511, 0, 255);
+    log_i(">> Light Level " + String(light));
+    state[4] = (light & 0xff);  // lightlevel
+    int mic = (int)map(analogRead(WIO_MIC), 0, 511, 0, 255);
+    state[6] = (mic & 0xff);  // soundlevel
+    log_i(">> sound Level " + String(mic));
+#else
+    state[6] = (random(256) & 0xff);  // Random sensor value for soundlevel
+#endif
     state[5] = ((int)(temp + 128) & 0xff);  // temperature(+128)
+
     log_i("STATE read %s", (char *)state);
     pCharacteristic->setValue(state, 7);
   }
@@ -315,7 +382,11 @@ float gx, gy, gz;
 float pitch, roll, yaw;
 
 void updateIMU() {
-#if defined(ARDUINO_XIAO_ESP32C3)
+#if defined(ARDUINO_WIO_TERMINAL)
+  lis.getAcceleration(&ay, &ax, &az);
+  pitch = atan(-ax / sqrtf(ay * ay + az * az)) * RAD_TO_DEG;
+  roll = atan(ay / az) * RAD_TO_DEG;
+#else
   imu.getAccel(&ax, &ay, &az);
   imu.getGyro(&gx, &gy, &gz);
   imu.getTemp(&temp);
@@ -376,6 +447,35 @@ class AnalogPinCallbacks : public BLECharacteristicCallbacks {
 void setup() {
   Serial.begin(115200);
 
+#if defined(ARDUINO_WIO_TERMINAL)
+  // Display
+  tft.begin();
+  tft.setRotation(3);
+
+  // IMU
+  lis.begin(Wire1);
+  delay(100);
+  lis.setOutputDataRate(LIS3DHTR_DATARATE_50HZ);
+  lis.setFullScaleRange(LIS3DHTR_RANGE_2G);
+  lis.openTemp();
+  //// Button
+  // 5 way switch
+  pinMode(WIO_5S_UP, INPUT_PULLUP);
+  pinMode(WIO_5S_DOWN, INPUT_PULLUP);
+  pinMode(WIO_5S_LEFT, INPUT_PULLUP);
+  pinMode(WIO_5S_RIGHT, INPUT_PULLUP);
+  pinMode(WIO_5S_PRESS, INPUT_PULLUP);
+  // 3 Configurable Button
+  pinMode(WIO_KEY_A, INPUT_PULLUP);
+  pinMode(WIO_KEY_B, INPUT_PULLUP);
+  pinMode(WIO_KEY_C, INPUT_PULLUP);
+  // Light sensor
+  pinMode(WIO_LIGHT, INPUT);
+  // microphone
+  pinMode(WIO_MIC, INPUT);
+  // LED
+  pinMode(LED_BUILTIN, OUTPUT);
+#else
   // button
   pinMode(BTN_PIN, INPUT_PULLUP);
 
@@ -390,6 +490,7 @@ void setup() {
   u8g2.setFlipMode(1);
   u8g2.clearDisplay();
   u8g2.sendBuffer();
+#endif
 
 #if defined(ARDUINO_XIAO_ESP32C3)
   // Setup IMU MPU6886
@@ -402,7 +503,15 @@ void setup() {
   // Create MAC address base fixed ID
   uint8_t mac0[6] = { 0 };
 
+#if defined(ARDUINO_WIO_TERMINAL)
+  // Create random mac address for avoid conflict ID.
+  randomSeed(analogRead(A0));
+  for (int i = 0; i < sizeof(mac0); i++) {
+    mac0[i] = random(256);
+  }
+#else
   esp_efuse_mac_get_default(mac0);
+#endif
 
   String ID;
   for (int i = 0; i < 6; i++) {
@@ -418,9 +527,17 @@ void setup() {
   String("ID:" + ID).toCharArray(id_str, sizeof(id_str));
 
   // Start up screen
+#if defined(ARDUINO_WIO_TERMINAL)
+  fillScreen(TFT_BLUE);
+  tft.setTextSize(2);
+  tft.setCursor(0, 0);
+  tft.print("Welcome to\nM5bit Less!!\nPlease connect to\n");
+  tft.println(adv_str);
+#else
   fillScreen(WHITE);
   u8x8.setCursor(0, 0);
   u8x8.printf("%s", id_str);
+#endif
 
   log_i("BLE start.\n");
   log_i("%s\n", adv_str);
@@ -496,8 +613,10 @@ void setup() {
   BLEAdvertising *pAdvertising = pServer->getAdvertising();
   pAdvertising->start();
 
+#if defined(ARDUINO_XIAO_ESP32C3)
   // Multitask for play tone.
   xTaskCreatePinnedToCore(playToneTask, "playToneTask", 4096, NULL, 1, &playToneTaskHandle, 1);
+#endif
 }
 
 void sendBtn(uint8_t btnID, uint8_t btn, uint8_t btn_status, uint8_t prev) {
@@ -569,8 +688,23 @@ void loop() {
             btn_statusA = 0, btn_statusB = 0, btn_statusC = 0;
 
     // Get all button status
+#if defined(ARDUINO_WIO_TERMINAL)
+    if (digitalRead(WIO_KEY_A) == LOW) {
+      btnA = 1;
+      btn_statusA = 1;
+    }
+    if (digitalRead(WIO_KEY_B) == LOW) {
+      btnB = 1;
+      btn_statusB = 1;
+    }
+    if (digitalRead(WIO_KEY_C) == LOW) {
+      btnC = 1;
+      btn_statusC = 1;
+    }
+#else
     btnA = (digitalRead(BTN_PIN) == 0);
     btn_statusA = btnA;
+#endif
 
 #define BUTTON_DELAY 50
 
