@@ -688,7 +688,6 @@ void setup() {
 
   Serial.print("BLE start.\n");
   Serial.println(adv_str);
-  Serial.printf("%d\n", BLE_GAP_ADV_SET_DATA_SIZE_MAX);
 
 #if defined(NRF52840_SENSE)
   Bluefruit.begin();
